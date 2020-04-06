@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:personal_diary/add_diary_screen.dart';
+import 'package:personal_diary/views/add_diary_screen.dart';
+import 'package:personal_diary/views/diary_list_view.dart';
 
-import 'design_course_app_theme.dart';
+import '../design_course_app_theme.dart';
 
 class DiaryHomeScreen extends StatefulWidget {
   @override
@@ -24,12 +25,7 @@ class _DiaryHomeScreenState extends State<DiaryHomeScreen> {
     return Material(
       child: Scaffold(
           backgroundColor: Colors.transparent,
-          body: ListView.builder(
-            itemCount: 10,
-            itemBuilder: (context, position) {
-              return diaryItem();
-            },
-          ),
+          body: DiaryListView(),
           floatingActionButton: new FloatingActionButton(
               elevation: 0.0,
               child: new Icon(Icons.add),

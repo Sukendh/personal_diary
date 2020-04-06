@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'diary_home_screen.dart';
+import 'views/diary_home_screen.dart';
 
 void main() => runApp(MyApp());
 
