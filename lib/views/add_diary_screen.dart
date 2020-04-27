@@ -195,7 +195,7 @@ class _AddDiaryScreenState extends State<AddDiaryScreen> {
                   child: Center(
                     child: new Text(AppUtils.getCurrentWeekDay(), style: new TextStyle(
                         color: DesignCourseAppTheme.nearlyBlue,
-                        fontSize: 26.0,
+                        fontSize: 20.0,
                         fontWeight: FontWeight.bold
                     ),),
                   ),
@@ -276,8 +276,8 @@ class _AddDiaryScreenState extends State<AddDiaryScreen> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                  letterSpacing: 0.27,
+                  fontSize: 11,
+                  //letterSpacing: 0.27,
                   color: DesignCourseAppTheme.nearlyBlue,
                 ),
               ),
