@@ -1,21 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:personal_diary/plugins_utils/SharedPreferences.dart';
-import 'package:personal_diary/views/diary_home.dart';
-import 'package:personal_diary/views/login_screen.dart';
-import 'package:personal_diary/views/sign_up_screen.dart';
 
-void main() {
-  runApp(MyApp());
-//  Preferences.isLoggedIn().then((status) {
-//    if (status) {
-//      runApp(MyApp());
-//    } else {
-//      runApp(DiaryHome());
-//    }
-//  });
-}
+import 'note_list.dart';
 
-class MyApp extends StatelessWidget {
+class DiaryHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -46,7 +33,7 @@ class MyApp extends StatelessWidget {
               fontSize: 14),
         ),
       ),
-      home: LoginScreen(),
+      home: DiaryList(),
     );
   }
 }

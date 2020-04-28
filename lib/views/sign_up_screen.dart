@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:personal_diary/plugins_utils/GoogleSignin.dart';
+import 'package:personal_diary/plugins_utils/SharedPreferences.dart';
+
+import 'diary_home.dart';
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -10,11 +14,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   var divWidth;
   bool _autoValidate = false;
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
-  final TextEditingController _firstNameTextController =
-  new TextEditingController();
-  final TextEditingController _lastNameTextController =
-  new TextEditingController();
-  final TextEditingController _phoneTextController =
+  final TextEditingController _emailTextController =
   new TextEditingController();
   final TextEditingController _passwordTextController =
   new TextEditingController();
@@ -43,127 +43,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ),
       ),
       appBar: AppBar(
-        leading: IconButton(
-            icon: Icon(
-              Icons.close,
-              color: Colors.blueGrey,
-            ),
-            onPressed: () {
-              Navigator.pop(context, false);
-            }),
         backgroundColor: Colors.white,
         elevation: 0.0,
       ),
-    );
-  }
-
-  Widget _buildEmailSignUpForm() {
-    //Form 1
-    return new Column(
-      children: <Widget>[
-        new Container(
-          height: 51.0,
-          width: 144.0,
-          child: new Container(),
-        ),
-        new Container(
-            margin: EdgeInsets.only(
-                top: 50.0, left: kMarginPadding, right: kMarginPadding),
-            child: new Text(
-              "Sign up ",
-              maxLines: 1,
-            )),
-        new Row(
-          children: <Widget>[
-            new Expanded(
-                child: new Container(
-                  padding: EdgeInsets.all(10.0),
-                  margin: EdgeInsets.only(left: kMarginPadding, right: 10.0),
-                  child: new TextFormField(
-                      style: new TextStyle(
-                          fontSize: kFontSize, color: Colors.blueGrey),
-                      controller: _firstNameTextController,
-                      validator: _validateFields,
-                      decoration: InputDecoration(
-                          labelText: "First Name*",
-                          hintText: "Enter your first name",
-                          labelStyle: new TextStyle(fontSize: kFontSize))),
-                )),
-            new Expanded(
-                child: new Container(
-                  padding: EdgeInsets.all(10.0),
-                  margin: EdgeInsets.only(left: 10.0, right: kMarginPadding),
-                  child: new TextFormField(
-                      style: new TextStyle(
-                          fontSize: kFontSize, color: Colors.blueGrey),
-                      controller: _lastNameTextController,
-                      validator: _validateFields,
-                      decoration: InputDecoration(
-                          labelText: "Last name",
-                          hintText: "Enter your last name",
-                          labelStyle: new TextStyle(fontSize: kFontSize))),
-                ))
-          ],
-        ),
-        SizedBox(
-          height: 10.0,
-        ),
-        new Container(
-          padding: EdgeInsets.only(left: kMarginPadding, right: kMarginPadding),
-          margin: EdgeInsets.only(left: 10.0, right: 10.0),
-          child: new TextFormField(
-              style: new TextStyle(
-                  fontSize: kFontSize, color: Colors.blueGrey),
-              controller: _phoneTextController,
-              inputFormatters: [
-                new BlacklistingTextInputFormatter(new RegExp('[\\.|\\,|\\-]')),
-              ],
-              keyboardType: TextInputType.number,
-              validator: (value) {
-                if (value.length == 0) {
-                  return "Please enter your phone number";
-                } else {
-                  return null;
-                }
-              },
-              decoration: InputDecoration(
-                  labelText: "Phone number",
-                  hintText: "Enter phone number",
-                  labelStyle: new TextStyle(fontSize: kFontSize))),
-        ),
-        SizedBox(
-          height: 10.0,
-        ),
-        new Container(
-          padding: EdgeInsets.only(left: kMarginPadding, right: kMarginPadding),
-          margin: EdgeInsets.only(left: 10.0, right: 10.0),
-          child: new TextFormField(
-              style: new TextStyle(
-                  fontSize: kFontSize, color: Colors.blueGrey),
-              obscureText: true,
-              controller: _passwordTextController,
-              validator: (value) {
-                if (value.length == 0) {
-                  return "Password is not valid";
-                } else if (value.length < 6) {
-                  return "Please enter atleast 6 characters";
-                } else {
-                  return null;
-                }
-              },
-              decoration: InputDecoration(
-                  labelText: "Password*",
-                  hintText: "Enter a password",
-                  labelStyle: new TextStyle(fontSize: kFontSize))),
-        ),
-        SizedBox(
-          height: 10.0,
-        ),
-        new RaisedButton(
-          child: new Text("Sign Up"),
-          onPressed: () => _signUpButtonTaped(),
-        ),
-      ],
     );
   }
 
@@ -173,6 +55,107 @@ class _SignUpScreenState extends State<SignUpScreen> {
     } else {
       return null;
     }
+  }
+
+  Widget _buildEmailSignUpForm() {
+    //Form 1
+    return new Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        new Container(
+          height: 50.0,
+          width: 145.0,
+          child: Icon(Icons.image, size: 100.0,),
+        ),
+        new Container(
+          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+          margin: EdgeInsets.only(left: kMarginPadding, right: kMarginPadding),
+          child: new TextFormField(
+              controller: _emailTextController,
+              validator: _validateEmail,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                  labelText: "Email*",
+                  hintText: "Enter your email",
+                  labelStyle: new TextStyle(fontSize: 13))),
+        ),
+        SizedBox(
+          height: 10.0,
+        ),
+        new Container(
+          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+          margin: EdgeInsets.only(left: kMarginPadding, right: kMarginPadding),
+          child: new TextFormField(
+              style: new TextStyle(
+                  fontSize: kMarginPadding, color: Colors.black38),
+              obscureText: true,
+              validator: (String value) {
+                if (value.isEmpty) {
+                  return "Please enter your password";
+                } else {
+                  return null;
+                }
+              },
+              controller: _passwordTextController,
+              decoration: InputDecoration(
+                  labelText: "Password*",
+                  hintText: "Enter a password",
+                  labelStyle: new TextStyle(fontSize: kFontSize))),
+        ),
+        new Container(
+          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+          margin: EdgeInsets.only(left: kMarginPadding, right: kMarginPadding),
+          child: new TextFormField(
+              style: new TextStyle(
+                  fontSize: kMarginPadding, color: Colors.black38),
+              obscureText: true,
+              validator: (String value) {
+                if (value.isEmpty) {
+                  return "Please re-enter your password";
+                } else {
+                  return null;
+                }
+              },
+              controller: _passwordTextController,
+              decoration: InputDecoration(
+                  labelText: "Password*",
+                  hintText: "Enter a password",
+                  labelStyle: new TextStyle(fontSize: kFontSize))),
+        ),
+        SizedBox(
+          height: 10.0,
+        ),
+        new RaisedButton(
+          onPressed: () => _signUpButtonTapped(),
+          child: new Text("Sign Up"),
+        ),
+      ],
+    );
+  }
+
+  String _validateEmail(String email) {
+    Pattern pattern =
+        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if (regex.hasMatch(email))
+      return null;
+    else
+      return "Please enter a valid email";
+  }
+
+  _signUpButtonTapped() {
+    FocusScope.of(context).requestFocus(new FocusNode());
+
+    GoogleSigninUtils().SignupUserWithUsernameAndPassowrd(_emailTextController.text.toString(), _passwordTextController.text.toString()).then((user) {
+      print('----- new user ${user}');
+      Preferences.setLoginStatus(true);
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => DiaryHome()));
+    });
+
+//    if (_formKey.currentState.validate()) {
+//
+//    }
   }
 
   _signUpButtonTaped() {

@@ -31,7 +31,7 @@ class DiaryListState extends State<DiaryList> {
 
     Widget myAppBar() {
       return AppBar(
-        title: Text('Notes', style: Theme.of(context).textTheme.headline),
+        title: Text('Daily', style: Theme.of(context).textTheme.headline),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.white,
@@ -46,7 +46,7 @@ class DiaryListState extends State<DiaryList> {
             final Dairy result = await showSearch(
                 context: context, delegate: DiarySearch(diaries: diaryList));
             if (result != null) {
-              navigateToDetail(result, 'Edit Note');
+              navigateToDetail(result, 'Edit Dairy');
             }
           },
         ),
@@ -78,7 +78,7 @@ class DiaryListState extends State<DiaryList> {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text('Click on the add button to add a new note!',
+            child: Text('Click on the add button share your day',
                 style: Theme.of(context).textTheme.body1),
           ),
         ),
@@ -89,7 +89,7 @@ class DiaryListState extends State<DiaryList> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          navigateToDetail(Dairy('', '', 3, 0), 'Add Note');
+          navigateToDetail(Dairy('', '', 3, 0), 'Add your day');
         },
         tooltip: 'Add Note',
         shape: CircleBorder(side: BorderSide(color: Colors.black, width: 2.0)),
@@ -106,7 +106,7 @@ class DiaryListState extends State<DiaryList> {
       itemCount: count,
       itemBuilder: (BuildContext context, int index) => GestureDetector(
         onTap: () {
-          navigateToDetail(this.diaryList[index], 'Edit Note');
+          navigateToDetail(this.diaryList[index], 'Edit Diary');
         },
         child: Padding(
           padding: const EdgeInsets.all(8.0),

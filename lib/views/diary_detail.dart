@@ -43,7 +43,7 @@ class NoteDetailState extends State<NoteDetail> {
             elevation: 0,
             title: Text(
               appBarTitle,
-              style: Theme.of(context).textTheme.headline,
+              style: Theme.of(context).textTheme.title,
             ),
             backgroundColor: colors[color],
             leading: IconButton(

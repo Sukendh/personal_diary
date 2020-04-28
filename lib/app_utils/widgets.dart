@@ -23,7 +23,7 @@ class PriorityPicker extends StatefulWidget {
 
 class _PriorityPickerState extends State<PriorityPicker> {
   int selectedIndex;
-  List<String> priorityText = ['Low', 'High', 'Very High'];
+  List<String> priorityText = ['Happy', 'Good', 'Sad'];
   List<Color> priorityColor = [Colors.green, Colors.lightGreen, Colors.red];
   @override
   Widget build(BuildContext context) {

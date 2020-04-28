@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:personal_diary/models/diary_data.dart';
+import 'package:personal_diary/plugins_utils/GoogleSignin.dart';
+import 'package:personal_diary/plugins_utils/SharedPreferences.dart';
+import 'package:personal_diary/views/diary_home.dart';
+import 'package:personal_diary/views/sign_up_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -10,9 +15,9 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _autoValidate = false;
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final TextEditingController _emailTextController =
-  new TextEditingController();
+      new TextEditingController();
   final TextEditingController _passwordTextController =
-  new TextEditingController();
+      new TextEditingController();
   var kMarginPadding = 16.0;
   var kFontSize = 13.0;
 
@@ -51,68 +56,66 @@ class _LoginScreenState extends State<LoginScreen> {
         new Container(
           height: 50.0,
           width: 145.0,
-          child: Icon(Icons.image, size: 100.0,),
-        ),
-        new Container(
-          margin: EdgeInsets.only(top: 50.0, left: 15.0, right: 15.0),
-          child: new Text(
-            "Login here",
-            maxLines: 1,
+          child: Icon(
+            Icons.image,
+            size: 100.0,
           ),
         ),
         new Container(
-          margin: EdgeInsets.only(top: 50.0, left: 15.0, right: 15.0),
+          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+          margin: EdgeInsets.only(left: kMarginPadding, right: kMarginPadding),
+          child: new TextFormField(
+              controller: _emailTextController,
+              validator: _validateEmail,
+              keyboardType: TextInputType.emailAddress,
+              decoration: InputDecoration(
+                  labelText: "Email*",
+                  hintText: "Enter your email",
+                  labelStyle: new TextStyle(fontSize: 13))),
+        ),
+        SizedBox(
+          height: 10.0,
+        ),
+        new Container(
+          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+          margin: EdgeInsets.only(left: kMarginPadding, right: kMarginPadding),
+          child: new TextFormField(
+              style: new TextStyle(
+                  fontSize: kMarginPadding, color: Colors.black38),
+              obscureText: true,
+              validator: (String value) {
+                if (value.isEmpty) {
+                  return "Please enter your password";
+                } else {
+                  return null;
+                }
+              },
+              controller: _passwordTextController,
+              decoration: InputDecoration(
+                  labelText: "Password*",
+                  hintText: "Enter a password",
+                  labelStyle: new TextStyle(fontSize: kFontSize))),
+        ),
+        SizedBox(
+          height: 10.0,
+        ),
+        new RaisedButton(
+          onPressed: () => _loginButtonTapped(),
+          child: new Text("Login"),
+        ),
+        new Container(
+          margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
           child: _signInButton(),
         ),
-//        new Container(
-//          padding: EdgeInsets.only(left: 10.0, right: 10.0),
-//          margin: EdgeInsets.only(left: kMarginPadding, right: kMarginPadding),
-//          child: new TextFormField(
-//              controller: _emailTextController,
-//              validator: _validateEmail,
-//              keyboardType: TextInputType.emailAddress,
-//              decoration: InputDecoration(
-//                  labelText: "Email*",
-//                  hintText: "Enter your email",
-//                  labelStyle: new TextStyle(fontSize: 13))),
-//        ),
-//        SizedBox(
-//          height: 10.0,
-//        ),
-//        new Container(
-//          padding: EdgeInsets.only(left: 10.0, right: 10.0),
-//          margin: EdgeInsets.only(left: kMarginPadding, right: kMarginPadding),
-//          child: new TextFormField(
-//              style: new TextStyle(
-//                  fontSize: kMarginPadding, color: Colors.black38),
-//              obscureText: true,
-//              validator: (String value) {
-//                if (value.isEmpty) {
-//                  return "Please enter your password";
-//                } else {
-//                  return null;
-//                }
-//              },
-//              controller: _passwordTextController,
-//              decoration: InputDecoration(
-//                  labelText: "Password*",
-//                  hintText: "Enter a password",
-//                  labelStyle: new TextStyle(fontSize: kFontSize))),
-//        ),
-//        SizedBox(
-//          height: 10.0,
-//        ),
-//        new RaisedButton(
-//          onPressed: () => _loginButtonTapped(),
-//          child: new Text("Login"),
-//        ),
-//        new FlatButton(
-//            onPressed: () {
-//
-//            },
-//            child: new Text(
-//              'Forgot password',
-//            )),
+        new FlatButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SignUpScreen()));
+            },
+            child: new Text(
+              'Create an account',
+              style: new TextStyle(color: Colors.black),
+            )),
       ],
     );
   }
@@ -129,15 +132,27 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _loginButtonTapped() {
     FocusScope.of(context).requestFocus(new FocusNode());
-    if (_formKey.currentState.validate()) {
 
-    }
+//    if (_formKey.currentState.validate()) {
+//
+//    }
+  }
+
+  _googleSignInTapped() {
+    GoogleSigninUtils().signInWithGoogle().then((user) {
+      print("------------- ${user}");
+      if (user.getIdToken() != false) {
+        Preferences.setLoginStatus(true);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => DiaryHome()));
+      }
+    });
   }
 
   Widget _signInButton() {
     return OutlineButton(
       splashColor: Colors.grey,
-      onPressed: () {},
+      onPressed: () => _googleSignInTapped(),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
       highlightElevation: 0,
       borderSide: BorderSide(color: Colors.grey),
@@ -163,5 +178,4 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
-
 }
