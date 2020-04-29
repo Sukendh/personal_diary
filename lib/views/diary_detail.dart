@@ -37,7 +37,6 @@ class NoteDetailState extends State<NoteDetail> {
     } else {
       _selectedDate = DateTime.now();
     }
-    note.date = DateFormat.yMMMd().format(DateTime.now());
   }
 
   @override
@@ -83,84 +82,97 @@ class NoteDetailState extends State<NoteDetail> {
               )
             ],
           ),
-          body: Container(
-            color: colors[color],
-            child: Column(
-              children: <Widget>[
-                PriorityPicker(
-                  selectedIndex: 3 - note.priority,
-                  onTap: (index) {
-                    isEdited = true;
-                    note.priority = 3 - index;
-                  },
-                ),
-                ColorPicker(
-                  selectedIndex: note.color,
-                  onTap: (index) {
-                    setState(() {
-                      color = index;
-                    });
-                    isEdited = true;
-                    note.color = index;
-                  },
-                ),
-                SizedBox(
-                  width: width,
-                  height: 40.0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      new Text(DateFormat.yMMMd().format(_selectedDate)),
-                      new IconButton(
-                          icon: Icon(Icons.calendar_today),
-                          onPressed: () {
-                            showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2001),
-                                lastDate: DateTime(2222))
-                                .then((date) {
-                              setState(() {
-                                _selectedDate = date;
-                              });
-                            });
-                          })
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: TextField(
-                    controller: titleController,
-                    maxLength: 255,
-                    style: Theme.of(context).textTheme.body1,
-                    onChanged: (value) {
-                      updateTitle();
+          body: SingleChildScrollView(
+            child: Container(
+              color: colors[color],
+              child: Column(
+                children: <Widget>[
+                  PriorityPicker(
+                    selectedIndex: 3 - note.priority,
+                    onTap: (index) {
+                      isEdited = true;
+                      note.priority = 3 - index;
                     },
-                    decoration: InputDecoration.collapsed(
-                      hintText: 'Title',
+                  ),
+                  ColorPicker(
+                    selectedIndex: note.color,
+                    onTap: (index) {
+                      setState(() {
+                        color = index;
+                      });
+                      isEdited = true;
+                      note.color = index;
+                    },
+                  ),
+                  Container(
+                    width: width,
+                    height: 40.0,
+                    margin: EdgeInsets.only(left: 120.0, right: 16.0),
+                    decoration: new BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      border: Border.all(width: 1.5, color: Colors.grey),
+                      borderRadius: BorderRadius.all(Radius.circular(
+                              20.0) //         <--- border radius here
+                          ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        new Text(
+                          DateFormat.yMMMd().format(_selectedDate),
+                          style: new TextStyle(fontSize: 18.0),
+                        ),
+                        new IconButton(
+                            icon: Icon(Icons.calendar_today),
+                            onPressed: () {
+                              showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime(2001),
+                                      lastDate: DateTime(2222))
+                                  .then((date) {
+                                setState(() {
+                                  _selectedDate = date;
+                                });
+                              });
+                            })
+                      ],
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Padding(
+                  Padding(
                     padding: EdgeInsets.all(16.0),
                     child: TextField(
-                      keyboardType: TextInputType.multiline,
-                      maxLines: 10,
+                      controller: titleController,
                       maxLength: 255,
-                      controller: descriptionController,
-                      style: Theme.of(context).textTheme.body2,
+                      style: Theme.of(context).textTheme.body1,
                       onChanged: (value) {
-                        updateDescription();
+                        updateTitle();
                       },
                       decoration: InputDecoration.collapsed(
-                        hintText: 'Description',
+                        hintText: 'Title',
                       ),
                     ),
                   ),
-                ),
-              ],
+                  Container(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: TextField(
+                        keyboardType: TextInputType.multiline,
+                        maxLines: 10,
+                        maxLength: 255,
+                        controller: descriptionController,
+                        style: Theme.of(context).textTheme.body2,
+                        onChanged: (value) {
+                          updateDescription();
+                        },
+                        decoration: InputDecoration.collapsed(
+                          hintText: 'Description',
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ));
