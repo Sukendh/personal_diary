@@ -51,9 +51,9 @@ class GoogleSigninUtils {
     }
   }
 
-  Future<String> currentUser() async {
+  Future<FirebaseUser> currentUser() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    return user.uid;
+    return user;
   }
 
   void signOutGoogle() async{

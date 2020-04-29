@@ -32,8 +32,7 @@ class NoteDetailState extends State<NoteDetail> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    if (note.date != null) {
+    if (note.date != '') {
       _selectedDate = DateFormat.yMMMd().parse(note.date);
     } else {
       _selectedDate = DateTime.now();
@@ -116,10 +115,10 @@ class NoteDetailState extends State<NoteDetail> {
                           icon: Icon(Icons.calendar_today),
                           onPressed: () {
                             showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(2001),
-                                    lastDate: DateTime(2222))
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2001),
+                                lastDate: DateTime(2222))
                                 .then((date) {
                               setState(() {
                                 _selectedDate = date;
