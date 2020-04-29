@@ -133,9 +133,14 @@ class _LoginScreenState extends State<LoginScreen> {
   _loginButtonTapped() {
     FocusScope.of(context).requestFocus(new FocusNode());
 
-//    if (_formKey.currentState.validate()) {
-//
-//    }
+    if (_formKey.currentState.validate()) {
+      GoogleSigninUtils().SigninUserWithUsernameAndPassowrd(_emailTextController.text, _passwordTextController.text).then((result) {
+        if (result != null) {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => DiaryHome()));
+        }
+      });
+    }
   }
 
   _googleSignInTapped() {

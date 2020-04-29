@@ -1,9 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_diary/app_utils/widgets.dart';
 import 'package:personal_diary/db_helper/db_helper.dart';
 import 'package:personal_diary/models/diary.dart';
-
 
 class NoteDetail extends StatefulWidget {
   final String appBarTitle;
@@ -26,11 +26,24 @@ class NoteDetailState extends State<NoteDetail> {
   TextEditingController descriptionController = TextEditingController();
   int color;
   bool isEdited = false;
+  DateTime _selectedDate;
 
   NoteDetailState(this.note, this.appBarTitle);
 
   @override
+  void initState() {
+    // TODO: implement initState
+    if (note.date != null) {
+      _selectedDate = DateFormat.yMMMd().parse(note.date);
+    } else {
+      _selectedDate = DateTime.now();
+    }
+    note.date = DateFormat.yMMMd().format(DateTime.now());
+  }
+
+  @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     titleController.text = note.title;
     descriptionController.text = note.description;
     color = note.color;
@@ -91,6 +104,30 @@ class NoteDetailState extends State<NoteDetail> {
                     isEdited = true;
                     note.color = index;
                   },
+                ),
+                SizedBox(
+                  width: width,
+                  height: 40.0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      new Text(DateFormat.yMMMd().format(_selectedDate)),
+                      new IconButton(
+                          icon: Icon(Icons.calendar_today),
+                          onPressed: () {
+                            showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(2001),
+                                    lastDate: DateTime(2222))
+                                .then((date) {
+                              setState(() {
+                                _selectedDate = date;
+                              });
+                            });
+                          })
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: EdgeInsets.all(16.0),
@@ -260,7 +297,7 @@ class NoteDetailState extends State<NoteDetail> {
   void _save() async {
     moveToLastScreen();
 
-    note.date = DateFormat.yMMMd().format(DateTime.now());
+    note.date = DateFormat.yMMMd().format(_selectedDate);
 
     if (note.id != null) {
       await helper.updateNote(note);

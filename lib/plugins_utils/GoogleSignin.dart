@@ -40,6 +40,22 @@ class GoogleSigninUtils {
     }
   }
 
+  Future<FirebaseUser> SigninUserWithUsernameAndPassowrd(String email, String password) async {
+    try {
+      AuthResult result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      FirebaseUser user = result.user;
+      return user;
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+  Future<String> currentUser() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    return user.uid;
+  }
+
   void signOutGoogle() async{
     await googleSignIn.signOut();
 

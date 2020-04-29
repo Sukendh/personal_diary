@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'note_list.dart';
+import 'diary_list.dart';
 
 class DiaryHome extends StatelessWidget {
   @override
