@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:personal_diary/app_utils/widgets.dart';
 import 'package:personal_diary/db_helper/db_helper.dart';
+import 'package:personal_diary/firestore/firestore_services.dart';
 import 'package:personal_diary/models/diary.dart';
 
 class NoteDetail extends StatefulWidget {
@@ -311,14 +312,18 @@ class NoteDetailState extends State<NoteDetail> {
     note.date = DateFormat.yMMMd().format(_selectedDate);
 
     if (note.id != null) {
-      await helper.updateNote(note);
+      //await helper.updateNote(note);
+      FirestoreServices().update(note.toMap());
     } else {
-      await helper.insertNote(note);
+      note.id = DateTime.now().millisecondsSinceEpoch;
+      FirestoreServices().add(note.toMap());
+      //await helper.insertNote(note);
     }
   }
 
   void _delete() async {
-    await helper.deleteNote(note.id);
+    //await helper.deleteNote(note.id);
+    FirestoreServices().delete(note.id.toString());
     moveToLastScreen();
   }
 }

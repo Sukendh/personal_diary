@@ -17,6 +17,7 @@ dependencies:
   shared_preferences:
   firebase_auth:
   google_sign_in:
+  cloud_firestore:
 
 
 dev_dependencies:

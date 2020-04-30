@@ -1,9 +1,11 @@
-import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:personal_diary/app_utils/widgets.dart';
 import 'package:personal_diary/db_helper/db_helper.dart';
+import 'package:personal_diary/firestore/firestore_services.dart';
 import 'package:personal_diary/models/diary.dart';
+import 'package:personal_diary/plugins_utils/GoogleSignin.dart';
 import 'package:personal_diary/views/search_note.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -18,6 +20,7 @@ class DiaryList extends StatefulWidget {
 
 class DiaryListState extends State<DiaryList> {
   DatabaseHelper databaseHelper = DatabaseHelper();
+  final _firestore = Firestore.instance;
   List<Dairy> diaryList;
   int count = 0;
   int axisCount = 2;
@@ -206,19 +209,6 @@ class DiaryListState extends State<DiaryList> {
     }
   }
 
-  // void _delete(BuildContext context, Note note) async {
-  //   int result = await databaseHelper.deleteNote(note.id);
-  //   if (result != 0) {
-  //     _showSnackBar(context, 'Note Deleted Successfully');
-  //     updateListView();
-  //   }
-  // }
-
-  // void _showSnackBar(BuildContext context, String message) {
-  //   final snackBar = SnackBar(content: Text(message));
-  //   Scaffold.of(context).showSnackBar(snackBar);
-  // }
-
   void navigateToDetail(Dairy note, String title) async {
     bool result = await Navigator.push(context,
         MaterialPageRoute(builder: (context) => NoteDetail(note, title)));
@@ -227,16 +217,17 @@ class DiaryListState extends State<DiaryList> {
       updateListView();
     }
   }
-
-  void updateListView() {
-    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
-    dbFuture.then((database) {
-      Future<List<Dairy>> noteListFuture = databaseHelper.getNoteList();
-      noteListFuture.then((noteList) {
-        setState(() {
-          this.diaryList = noteList;
-          this.count = noteList.length;
-        });
+  
+  updateListView() async {
+    List<Dairy> list = new List<Dairy>();
+    var user = await GoogleSigninUtils().currentUser();
+    _firestore.collection(user.uid).getDocuments().then((snaps) {
+      for (DocumentSnapshot ds in snaps.documents) {
+        list.add(Dairy.fromSnapshot(ds));
+      }
+      setState(() {
+        this.diaryList = list;
+        this.count = list.length;
       });
     });
   }

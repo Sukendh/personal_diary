@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:personal_diary/models/diary_data.dart';
+import 'package:personal_diary/firestore/firestore_services.dart';
 import 'package:personal_diary/plugins_utils/GoogleSignin.dart';
 import 'package:personal_diary/plugins_utils/SharedPreferences.dart';
 import 'package:personal_diary/views/diary_home.dart';
@@ -136,6 +136,10 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState.validate()) {
       GoogleSigninUtils().SigninUserWithUsernameAndPassowrd(_emailTextController.text, _passwordTextController.text).then((result) {
         if (result != null) {
+          var map = {
+            'username': _emailTextController.text.trim().toString(),
+            'password': _passwordTextController.text.trim().toString()};
+          FirestoreServices().createUser(map, result.uid);
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => DiaryHome()));
         }

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Dairy {
   int _id;
   String _title;
@@ -12,14 +14,15 @@ class Dairy {
       [this._description]);
 
   int get id => _id;
-
   String get title => _title;
-
   String get description => _description;
-
   int get priority => _priority;
   int get color => _color;
   String get date => _date;
+
+  set id(int newId) {
+    this._id = newId;
+  }
 
   set title(String newTitle) {
     if (newTitle.length <= 255) {
@@ -66,6 +69,15 @@ class Dairy {
 
   // Extract a Note object from a Map object
   Dairy.fromMapObject(Map<String, dynamic> map) {
+    this._id = map['id'];
+    this._title = map['title'];
+    this._description = map['description'];
+    this._priority = map['priority'];
+    this._color = map['color'];
+    this._date = map['date'];
+  }
+
+  Dairy.fromSnapshot(DocumentSnapshot map) {
     this._id = map['id'];
     this._title = map['title'];
     this._description = map['description'];
