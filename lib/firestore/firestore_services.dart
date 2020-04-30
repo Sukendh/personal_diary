@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:personal_diary/app_utils/app_utils.dart';
 import 'package:personal_diary/models/diary.dart';
 import 'package:personal_diary/plugins_utils/GoogleSignin.dart';
 
@@ -12,7 +11,6 @@ class FirestoreServices {
   }
 
   Future<void> add(Map diary) async {
-    String ref = "user_diary";
     var user = await GoogleSigninUtils().currentUser();
     _firestore.collection(user.uid).document(diary['id'].toString()).setData(diary);
 
@@ -42,5 +40,17 @@ class FirestoreServices {
       print("Document Updated");
     }).catchError((e) => print(e));
   }
+
+//  Future<void> addTag(String tag) {
+//    String ref = "tags";
+//    _firestore.collection(ref).document(tag);
+//  }
+//
+//  Future<void> deleteTag(String tag) async {
+//    String ref = "tags";
+//    _firestore.collection(ref).document(tag).delete().whenComplete(() {
+//      print("Deleted Successfully");
+//    }).catchError((e) => print(e));
+//  }
 
 }

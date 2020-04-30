@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:personal_diary/firestore/firestore_services.dart';
 import 'package:personal_diary/plugins_utils/GoogleSignin.dart';
 import 'package:personal_diary/plugins_utils/SharedPreferences.dart';
 
@@ -17,6 +18,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailTextController =
   new TextEditingController();
   final TextEditingController _passwordTextController =
+  new TextEditingController();
+  final TextEditingController _confirmpasswordTextController =
   new TextEditingController();
   var kMarginPadding = 16.0;
   var kFontSize = 13.0;
@@ -111,12 +114,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
               obscureText: true,
               validator: (String value) {
                 if (value.isEmpty) {
-                  return "Please re-enter your password";
+                  return "Please confirm your password";
                 } else {
-                  return null;
+                  if (_passwordTextController.text == value) {
+                    return null;
+                  } else {
+                    return "Password mismatching";
+                  }
                 }
               },
-              controller: _passwordTextController,
+              controller: _confirmpasswordTextController,
               decoration: InputDecoration(
                   labelText: "Password*",
                   hintText: "Enter a password",
@@ -147,8 +154,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     FocusScope.of(context).requestFocus(new FocusNode());
 
     GoogleSigninUtils().SignupUserWithUsernameAndPassowrd(_emailTextController.text.toString(), _passwordTextController.text.toString()).then((user) {
-      print('----- new user ${user}');
-      Preferences.setLoginStatus(true);
+      var map = {
+        'username': _emailTextController.text.trim().toString(),
+        'password': _passwordTextController.text.trim().toString()};
+      FirestoreServices().createUser(map, user.uid);
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => DiaryHome()));
     });

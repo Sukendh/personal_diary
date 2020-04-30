@@ -137,7 +137,8 @@ class DiarySearch extends SearchDelegate<Dairy> {
   List<Dairy> getFilteredList(List<Dairy> note) {
     for (int i = 0; i < note.length; i++) {
       if (note[i].title.toLowerCase().contains(query) ||
-          note[i].description.toLowerCase().contains(query)) {
+          note[i].description.toLowerCase().contains(query) ||
+          note[i].date.toLowerCase().contains(query)) {
         filteredDiary.add(note[i]);
       }
     }

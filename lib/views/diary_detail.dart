@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_diary/app_utils/chip_tag.dart';
 import 'package:personal_diary/app_utils/widgets.dart';
 import 'package:personal_diary/db_helper/db_helper.dart';
 import 'package:personal_diary/firestore/firestore_services.dart';
@@ -25,9 +26,11 @@ class NoteDetailState extends State<NoteDetail> {
   Dairy note;
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController tagController = TextEditingController();
   int color;
   bool isEdited = false;
   DateTime _selectedDate;
+  List<String> tagsList = List<String>();
 
   NoteDetailState(this.note, this.appBarTitle);
 
@@ -105,39 +108,46 @@ class NoteDetailState extends State<NoteDetail> {
                       note.color = index;
                     },
                   ),
-                  Container(
-                    width: width,
-                    height: 40.0,
-                    margin: EdgeInsets.only(left: 120.0, right: 16.0),
-                    decoration: new BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      border: Border.all(width: 1.5, color: Colors.grey),
-                      borderRadius: BorderRadius.all(Radius.circular(
-                              20.0) //         <--- border radius here
+                  GestureDetector(
+                    onTap: () {
+                      showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2001),
+                              lastDate: DateTime(2222))
+                          .then((date) {
+                        setState(() {
+                          if (date != null) {
+                            _selectedDate = date;
+                          }
+                        });
+                      });
+                    },
+                    child: Container(
+                      width: 180.0,
+                      height: 40.0,
+                      margin: EdgeInsets.only(top: 10.0),
+                      decoration: new BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        border: Border.all(width: 1.5, color: Colors.grey),
+                        borderRadius: BorderRadius.all(Radius.circular(
+                                20.0) //         <--- border radius here
+                            ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          new Text(
+                            DateFormat.yMMMd().format(_selectedDate),
+                            style: new TextStyle(
+                                fontSize: 19.0, color: Colors.blueGrey),
                           ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        new Text(
-                          DateFormat.yMMMd().format(_selectedDate),
-                          style: new TextStyle(fontSize: 18.0),
-                        ),
-                        new IconButton(
-                            icon: Icon(Icons.calendar_today),
-                            onPressed: () {
-                              showDatePicker(
-                                      context: context,
-                                      initialDate: DateTime.now(),
-                                      firstDate: DateTime(2001),
-                                      lastDate: DateTime(2222))
-                                  .then((date) {
-                                setState(() {
-                                  _selectedDate = date;
-                                });
-                              });
-                            })
-                      ],
+                          new Icon(
+                            Icons.calendar_today,
+                            color: Colors.blueGrey,
+                          )
+                        ],
+                      ),
                     ),
                   ),
                   Padding(
@@ -172,6 +182,94 @@ class NoteDetailState extends State<NoteDetail> {
                       ),
                     ),
                   ),
+                  new Wrap(
+                    children: tagsList.map((item) =>  FilterChipTag(chipName: item)).toList(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: new Text('Add tags', style: TextStyle(fontSize: 16.0, color: Colors.black54),),
+                  ),),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    height: 64,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8, bottom: 8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: const BorderRadius.only(
+                            bottomRight: Radius.circular(13.0),
+                            bottomLeft: Radius.circular(13.0),
+                            topLeft: Radius.circular(13.0),
+                            topRight: Radius.circular(13.0),
+                          ),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.only(left: 16, right: 16),
+                                child: TextFormField(
+                                  controller: tagController,
+                                  style: TextStyle(
+                                    fontFamily: 'WorkSans',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                    color: Colors.black54,
+                                  ),
+                                  validator: (value) {
+                                    if (value != "") {
+                                      return null;
+                                    } else {
+                                      return 'is empty';
+                                    }
+                                  },
+                                  keyboardType: TextInputType.text,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    helperStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                        color: Colors.black
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              child: SizedBox(
+                                width: 60,
+                                height: 60,
+                                child: Icon(Icons.add_circle_outline, size: 30.0, color: Colors.grey),
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  tagsList.add(tagController.text.trim());
+                                  tagController.clear();
+                                });
+                              },
+                            ),
+                            GestureDetector(
+                              child: SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: Icon(Icons.clear, size: 30.0, color: Colors.grey),
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  tagsList.clear();
+                                  tagController.clear();
+                                });
+                              },
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
                 ],
               ),
             ),
