@@ -6,12 +6,13 @@ class Dairy {
   String _description;
   String _date;
   int _priority, _color;
+  List<String> _tags;
 
   Dairy(this._title, this._date, this._priority, this._color,
-      [this._description]);
+      [this._description, this._tags]);
 
   Dairy.withId(this._id, this._title, this._date, this._priority, this._color,
-      [this._description]);
+      [this._description, this._tags]);
 
   int get id => _id;
   String get title => _title;
@@ -19,6 +20,7 @@ class Dairy {
   int get priority => _priority;
   int get color => _color;
   String get date => _date;
+  List<String> get tags => _tags;
 
   set id(int newId) {
     this._id = newId;
@@ -52,6 +54,10 @@ class Dairy {
     this._date = newDate;
   }
 
+  set tags(List<String> newtags) {
+    this._tags = newtags;
+  }
+
   // Convert a Note object into a Map object
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
@@ -63,6 +69,7 @@ class Dairy {
     map['priority'] = _priority;
     map['color'] = _color;
     map['date'] = _date;
+    map['tags'] = _tags;
 
     return map;
   }
@@ -84,5 +91,6 @@ class Dairy {
     this._priority = map['priority'];
     this._color = map['color'];
     this._date = map['date'];
+    this._tags = map['tags'].cast<String>();
   }
 }

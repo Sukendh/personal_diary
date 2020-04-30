@@ -55,24 +55,24 @@ class DiarySearch extends SearchDelegate<Dairy> {
         color: Colors.white,
         child: Center(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: Icon(
-                    Icons.search,
-                    size: 50,
-                    color: Colors.black,
-                  ),
-                ),
-                Text(
-                  'Enter a note to search.',
-                  style: TextStyle(color: Colors.black),
-                )
-              ],
-            )),
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              width: 50,
+              height: 50,
+              child: Icon(
+                Icons.search,
+                size: 50,
+                color: Colors.black,
+              ),
+            ),
+            Text(
+              'Enter a note to search.',
+              style: TextStyle(color: Colors.black),
+            )
+          ],
+        )),
       );
     } else {
       filteredDiary = [];
@@ -82,24 +82,24 @@ class DiarySearch extends SearchDelegate<Dairy> {
           color: Colors.white,
           child: Center(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: Icon(
-                      Icons.sentiment_dissatisfied,
-                      size: 50,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Text(
-                    'No results found',
-                    style: TextStyle(color: Colors.black),
-                  )
-                ],
-              )),
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Icon(
+                  Icons.sentiment_dissatisfied,
+                  size: 50,
+                  color: Colors.black,
+                ),
+              ),
+              Text(
+                'No results found',
+                style: TextStyle(color: Colors.black),
+              )
+            ],
+          )),
         );
       } else {
         return Container(
@@ -138,7 +138,8 @@ class DiarySearch extends SearchDelegate<Dairy> {
     for (int i = 0; i < note.length; i++) {
       if (note[i].title.toLowerCase().contains(query) ||
           note[i].description.toLowerCase().contains(query) ||
-          note[i].date.toLowerCase().contains(query)) {
+          note[i].date.toLowerCase().contains(query) ||
+          note[i].tags.contains(query)) {
         filteredDiary.add(note[i]);
       }
     }
@@ -152,24 +153,24 @@ class DiarySearch extends SearchDelegate<Dairy> {
         color: Colors.white,
         child: Center(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: Icon(
-                    Icons.search,
-                    size: 50,
-                    color: Colors.black,
-                  ),
-                ),
-                Text(
-                  'Enter a note to search.',
-                  style: TextStyle(color: Colors.black),
-                )
-              ],
-            )),
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              width: 50,
+              height: 50,
+              child: Icon(
+                Icons.search,
+                size: 50,
+                color: Colors.black,
+              ),
+            ),
+            Text(
+              'Enter a note to search.',
+              style: TextStyle(color: Colors.black),
+            )
+          ],
+        )),
       );
     } else {
       filteredDiary = [];
@@ -179,24 +180,24 @@ class DiarySearch extends SearchDelegate<Dairy> {
           color: Colors.white,
           child: Center(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(
-                    width: 50,
-                    height: 50,
-                    child: Icon(
-                      Icons.sentiment_dissatisfied,
-                      size: 50,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Text(
-                    'No results found',
-                    style: TextStyle(color: Colors.black),
-                  )
-                ],
-              )),
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Icon(
+                  Icons.sentiment_dissatisfied,
+                  size: 50,
+                  color: Colors.black,
+                ),
+              ),
+              Text(
+                'No results found',
+                style: TextStyle(color: Colors.black),
+              )
+            ],
+          )),
         );
       } else {
         return Container(

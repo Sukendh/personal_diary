@@ -41,6 +41,9 @@ class NoteDetailState extends State<NoteDetail> {
     } else {
       _selectedDate = DateTime.now();
     }
+    if (note.tags != null) {
+      tagsList = note.tags;
+    }
   }
 
   @override
@@ -408,6 +411,7 @@ class NoteDetailState extends State<NoteDetail> {
     moveToLastScreen();
 
     note.date = DateFormat.yMMMd().format(_selectedDate);
+    note.tags = tagsList;
 
     if (note.id != null) {
       //await helper.updateNote(note);
