@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:personal_diary/app_utils/app_utils.dart';
 import 'package:personal_diary/firestore/firestore_services.dart';
 import 'package:personal_diary/plugins_utils/GoogleSignin.dart';
-import 'package:personal_diary/plugins_utils/SharedPreferences.dart';
 import 'package:personal_diary/views/diary_home.dart';
 import 'package:personal_diary/views/sign_up_screen.dart';
 
@@ -13,6 +13,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   var divWidth;
   bool _autoValidate = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   GlobalKey<FormState> _formKey = new GlobalKey<FormState>();
   final TextEditingController _emailTextController =
       new TextEditingController();
@@ -30,6 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     divWidth = MediaQuery.of(context).size.width;
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
@@ -54,14 +56,6 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         new Container(
-          height: 50.0,
-          width: 145.0,
-          child: Icon(
-            Icons.image,
-            size: 100.0,
-          ),
-        ),
-        new Container(
           padding: EdgeInsets.only(left: 10.0, right: 10.0),
           margin: EdgeInsets.only(left: kMarginPadding, right: kMarginPadding),
           child: new TextFormField(
@@ -74,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   labelStyle: new TextStyle(fontSize: 13))),
         ),
         SizedBox(
-          height: 10.0,
+          height: 20.0,
         ),
         new Container(
           padding: EdgeInsets.only(left: 10.0, right: 10.0),
@@ -93,15 +87,29 @@ class _LoginScreenState extends State<LoginScreen> {
               controller: _passwordTextController,
               decoration: InputDecoration(
                   labelText: "Password*",
-                  hintText: "Enter a password",
-                  labelStyle: new TextStyle(fontSize: kFontSize))),
+                  hintText: "Enter your password",
+                  labelStyle: new TextStyle(fontSize: 13))),
         ),
         SizedBox(
-          height: 10.0,
+          height: 20.0,
         ),
-        new RaisedButton(
+        OutlineButton(
+          splashColor: Colors.grey,
           onPressed: () => _loginButtonTapped(),
-          child: new Text("Login"),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+          highlightElevation: 0,
+          borderSide: BorderSide(color: Colors.grey),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+            child: Text(
+              'Login',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.grey,
+              ),
+            ),
+          ),
         ),
         new Container(
           margin: EdgeInsets.only(top: 20.0, left: 15.0, right: 15.0),
@@ -114,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
             },
             child: new Text(
               'Create an account',
-              style: new TextStyle(color: Colors.black),
+              style: new TextStyle(color: Colors.black54, fontSize: 18.0),
             )),
       ],
     );
@@ -132,16 +140,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _loginButtonTapped() {
     FocusScope.of(context).requestFocus(new FocusNode());
-
     if (_formKey.currentState.validate()) {
-      GoogleSigninUtils().SigninUserWithUsernameAndPassowrd(_emailTextController.text, _passwordTextController.text).then((result) {
+      _formKey.currentState.save();
+      GoogleSigninUtils()
+          .SigninUserWithUsernameAndPassowrd(
+              _emailTextController.text, _passwordTextController.text)
+          .then((result) {
         if (result != null) {
+          AppUtils.showSnackBar(_scaffoldKey, 'Signed in...');
           var map = {
             'username': _emailTextController.text.trim().toString(),
-            'password': _passwordTextController.text.trim().toString()};
+            'password': _passwordTextController.text.trim().toString()
+          };
           FirestoreServices().createUser(map, result.uid);
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => DiaryHome()));
+        } else {
+          AppUtils.showSnackBar(_scaffoldKey, 'Sign in error...');
         }
       });
     }
@@ -149,11 +164,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _googleSignInTapped() {
     GoogleSigninUtils().signInWithGoogle().then((user) {
-      print("------------- ${user}");
       if (user.getIdToken() != false) {
-        Preferences.setLoginStatus(true);
+        AppUtils.showSnackBar(_scaffoldKey, 'Signed in...');
+        var map = {
+          'username': user.email,
+          'password': user.uid
+        };
+        FirestoreServices().createUser(map, user.uid);
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => DiaryHome()));
+      } else {
+        AppUtils.showSnackBar(_scaffoldKey, 'Sign in error...');
       }
     });
   }

@@ -52,13 +52,13 @@ class GoogleSigninUtils {
   }
 
   Future<FirebaseUser> currentUser() async {
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    FirebaseUser user = await _auth.currentUser();
     return user;
   }
 
   void signOutGoogle() async{
     await googleSignIn.signOut();
-
+    FirebaseAuth.instance.signOut();
     print("User Sign Out");
   }
 }

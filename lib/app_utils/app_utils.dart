@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class AppUtils {
-  static void _showSnackBar(BuildContext context, String message) {
-    final snackBar = SnackBar(content: Text(message));
-    Scaffold.of(context).showSnackBar(snackBar);
+  static void showSnackBar(GlobalKey<ScaffoldState> scaffoldKey, String message) {
+    scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(message),
+      duration: Duration(seconds: 2),
+    ));
   }
 }

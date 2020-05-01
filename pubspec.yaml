@@ -10,11 +10,9 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^0.1.2
-  sqflite:
   path_provider:
   intl:
   flutter_staggered_grid_view:
-  shared_preferences:
   firebase_auth:
   google_sign_in:
   cloud_firestore:
@@ -39,6 +37,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/google_logo.png
+    - assets/happy.png
+    - assets/good.png
+    - assets/bad.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

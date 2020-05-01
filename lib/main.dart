@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:personal_diary/plugins_utils/GoogleSignin.dart';
-import 'package:personal_diary/plugins_utils/SharedPreferences.dart';
 import 'package:personal_diary/views/diary_home.dart';
 import 'package:personal_diary/views/login_screen.dart';
-import 'package:personal_diary/views/sign_up_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

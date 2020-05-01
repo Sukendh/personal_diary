@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:personal_diary/app_utils/app_utils.dart';
 import 'package:personal_diary/app_utils/chip_tag.dart';
 import 'package:personal_diary/app_utils/widgets.dart';
-import 'package:personal_diary/db_helper/db_helper.dart';
 import 'package:personal_diary/firestore/firestore_services.dart';
 import 'package:personal_diary/models/diary.dart';
 
@@ -20,10 +20,9 @@ class NoteDetail extends StatefulWidget {
 }
 
 class NoteDetailState extends State<NoteDetail> {
-  DatabaseHelper helper = DatabaseHelper();
-
   String appBarTitle;
   Dairy note;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController tagController = TextEditingController();
@@ -49,6 +48,7 @@ class NoteDetailState extends State<NoteDetail> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     titleController.text = note.title;
     descriptionController.text = note.description;
     color = note.color;
@@ -57,6 +57,7 @@ class NoteDetailState extends State<NoteDetail> {
           isEdited ? showDiscardDialog(context) : moveToLastScreen();
         },
         child: Scaffold(
+          key: _scaffoldKey,
           appBar: AppBar(
             elevation: 0,
             title: Text(
@@ -91,6 +92,7 @@ class NoteDetailState extends State<NoteDetail> {
           ),
           body: SingleChildScrollView(
             child: Container(
+              height: height,
               color: colors[color],
               child: Column(
                 children: <Widget>[
@@ -172,7 +174,7 @@ class NoteDetailState extends State<NoteDetail> {
                       padding: EdgeInsets.all(16.0),
                       child: TextField(
                         keyboardType: TextInputType.multiline,
-                        maxLines: 10,
+                        maxLines: 15,
                         maxLength: 255,
                         controller: descriptionController,
                         style: Theme.of(context).textTheme.body2,
@@ -186,22 +188,20 @@ class NoteDetailState extends State<NoteDetail> {
                     ),
                   ),
                   new Wrap(
-                    children: tagsList.map((item) =>  FilterChipTag(chipName: item)).toList(),
+                    children: tagsList
+                        .map((item) => FilterChipTag(chipName: item))
+                        .toList(),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 10.0),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: new Text('Add tags', style: TextStyle(fontSize: 16.0, color: Colors.black54),),
-                  ),),
                   Container(
-                    width: MediaQuery.of(context).size.width * 0.75,
+                    width: MediaQuery.of(context).size.width,
                     height: 64,
+                    margin: EdgeInsets.only(left: 16.0, right: 16.0),
                     child: Padding(
                       padding: const EdgeInsets.only(top: 8, bottom: 8),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.grey[200],
+                          color: colors[color],
+                          border: Border.all(width: 1.5, color: Colors.grey),
                           borderRadius: const BorderRadius.only(
                             bottomRight: Radius.circular(13.0),
                             bottomLeft: Radius.circular(13.0),
@@ -213,7 +213,8 @@ class NoteDetailState extends State<NoteDetail> {
                           children: <Widget>[
                             Expanded(
                               child: Container(
-                                padding: const EdgeInsets.only(left: 16, right: 16),
+                                padding:
+                                    const EdgeInsets.only(left: 16, right: 16),
                                 child: TextFormField(
                                   controller: tagController,
                                   style: TextStyle(
@@ -231,12 +232,13 @@ class NoteDetailState extends State<NoteDetail> {
                                   },
                                   keyboardType: TextInputType.text,
                                   decoration: InputDecoration(
+                                    hintText: "Enter a tag",
+                                    labelStyle: new TextStyle(fontSize: 16.0),
                                     border: InputBorder.none,
                                     helperStyle: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                        color: Colors.black
-                                    ),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
+                                        color: Colors.black),
                                   ),
                                 ),
                               ),
@@ -245,7 +247,8 @@ class NoteDetailState extends State<NoteDetail> {
                               child: SizedBox(
                                 width: 60,
                                 height: 60,
-                                child: Icon(Icons.add_circle_outline, size: 30.0, color: Colors.grey),
+                                child: Icon(Icons.add_circle_outline,
+                                    size: 30.0, color: Colors.grey),
                               ),
                               onTap: () {
                                 setState(() {
@@ -258,7 +261,8 @@ class NoteDetailState extends State<NoteDetail> {
                               child: SizedBox(
                                 width: 40,
                                 height: 40,
-                                child: Icon(Icons.clear, size: 30.0, color: Colors.grey),
+                                child: Icon(Icons.clear,
+                                    size: 30.0, color: Colors.grey),
                               ),
                               onTap: () {
                                 setState(() {
@@ -272,7 +276,6 @@ class NoteDetailState extends State<NoteDetail> {
                       ),
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -414,17 +417,17 @@ class NoteDetailState extends State<NoteDetail> {
     note.tags = tagsList;
 
     if (note.id != null) {
-      //await helper.updateNote(note);
+      AppUtils.showSnackBar(_scaffoldKey, 'Dairy updated successfully...');
       FirestoreServices().update(note.toMap());
     } else {
+      AppUtils.showSnackBar(_scaffoldKey, 'Diary added successfully...');
       note.id = DateTime.now().millisecondsSinceEpoch;
       FirestoreServices().add(note.toMap());
-      //await helper.insertNote(note);
     }
   }
 
   void _delete() async {
-    //await helper.deleteNote(note.id);
+    AppUtils.showSnackBar(_scaffoldKey, 'Diary deleted successfully...');
     FirestoreServices().delete(note.id.toString());
     moveToLastScreen();
   }

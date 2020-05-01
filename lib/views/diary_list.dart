@@ -2,12 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:personal_diary/app_utils/widgets.dart';
-import 'package:personal_diary/db_helper/db_helper.dart';
-import 'package:personal_diary/firestore/firestore_services.dart';
 import 'package:personal_diary/models/diary.dart';
 import 'package:personal_diary/plugins_utils/GoogleSignin.dart';
+import 'package:personal_diary/views/login_screen.dart';
 import 'package:personal_diary/views/search_note.dart';
-import 'package:sqflite/sqflite.dart';
 
 import 'diary_detail.dart';
 
@@ -19,7 +17,6 @@ class DiaryList extends StatefulWidget {
 }
 
 class DiaryListState extends State<DiaryList> {
-  DatabaseHelper databaseHelper = DatabaseHelper();
   final _firestore = Firestore.instance;
   List<Dairy> diaryList;
   int count = 0;
@@ -41,33 +38,39 @@ class DiaryListState extends State<DiaryList> {
         leading: diaryList.length == 0
             ? Container()
             : IconButton(
-          icon: Icon(
-            Icons.search,
-            color: Colors.black,
-          ),
-          onPressed: () async {
-            final Dairy result = await showSearch(
-                context: context, delegate: DiarySearch(diaries: diaryList));
-            if (result != null) {
-              navigateToDetail(result, 'Edit Dairy');
-            }
-          },
-        ),
+                icon: Icon(
+                  Icons.search,
+                  color: Colors.black,
+                ),
+                onPressed: () async {
+                  final Dairy result = await showSearch(
+                      context: context,
+                      delegate: DiarySearch(diaries: diaryList));
+                  if (result != null) {
+                    navigateToDetail(result, 'Edit Dairy');
+                  }
+                },
+              ),
         actions: <Widget>[
           diaryList.length == 0
-              ? Container(
-
-          )
+              ? Container()
               : IconButton(
+                  icon: Icon(
+                    axisCount == 2 ? Icons.list : Icons.grid_on,
+                    color: Colors.black,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      axisCount = axisCount == 2 ? 4 : 2;
+                    });
+                  },
+                ),
+          IconButton(
             icon: Icon(
-              axisCount == 2 ? Icons.list : Icons.grid_on,
+              Icons.power_settings_new,
               color: Colors.black,
             ),
-            onPressed: () {
-              setState(() {
-                axisCount = axisCount == 2 ? 4 : 2;
-              });
-            },
+            onPressed: () => showLogoutDialog(context),
           )
         ],
       );
@@ -77,19 +80,19 @@ class DiaryListState extends State<DiaryList> {
       appBar: myAppBar(),
       body: diaryList.length == 0
           ? Container(
-        color: Colors.white,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text('Click on the add button share your day',
-                style: Theme.of(context).textTheme.body1),
-          ),
-        ),
-      )
+              color: Colors.white,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text('Click on the add button share your day',
+                      style: Theme.of(context).textTheme.body1),
+                ),
+              ),
+            )
           : Container(
-        color: Colors.white,
-        child: getNotesList(),
-      ),
+              color: Colors.white,
+              child: getNotesList(),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           navigateToDetail(Dairy('', '', 3, 0), 'Add your day');
@@ -133,12 +136,9 @@ class DiaryListState extends State<DiaryList> {
                         ),
                       ),
                     ),
-                    Text(
-                      getPriorityText(this.diaryList[index].priority),
-                      style: TextStyle(
-                          color: getPriorityColor(
-                              this.diaryList[index].priority)),
-                    ),
+                    new Container(
+                      child: getPriorityIcon(this.diaryList[index].priority),
+                    )
                   ],
                 ),
                 Padding(
@@ -192,20 +192,20 @@ class DiaryListState extends State<DiaryList> {
   }
 
   // Returns the priority icon
-  String getPriorityText(int priority) {
+  Widget getPriorityIcon(int priority) {
     switch (priority) {
       case 1:
-        return '!!!';
+        return Image(image: AssetImage("assets/bad.png"), height: 25.0);
         break;
       case 2:
-        return '!!';
+        return Image(image: AssetImage("assets/good.png"), height: 25.0);
         break;
       case 3:
-        return '!';
+        return Image(image: AssetImage("assets/happy.png"), height: 25.0);
         break;
 
       default:
-        return '!';
+        return Image(image: AssetImage("assets/happy.png"), height: 25.0);
     }
   }
 
@@ -217,7 +217,7 @@ class DiaryListState extends State<DiaryList> {
       updateListView();
     }
   }
-  
+
   updateListView() async {
     List<Dairy> list = new List<Dairy>();
     var user = await GoogleSigninUtils().currentUser();
@@ -230,5 +230,38 @@ class DiaryListState extends State<DiaryList> {
         this.count = list.length;
       });
     });
+  }
+
+  void showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))),
+          title: Text(
+            "Logout!",
+            style: Theme.of(context).textTheme.body1,
+          ),
+          content: Text('Are you sure do you want to logout?.',
+              style: Theme.of(context).textTheme.body2),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("Yes",
+                  style: Theme.of(context)
+                      .textTheme
+                      .body1
+                      .copyWith(color: Colors.purple)),
+              onPressed: () {
+                GoogleSigninUtils().signOutGoogle();
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                    context, MaterialPageRoute(builder: (context) => LoginScreen()));
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

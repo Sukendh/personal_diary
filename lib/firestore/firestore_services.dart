@@ -40,17 +40,4 @@ class FirestoreServices {
       print("Document Updated");
     }).catchError((e) => print(e));
   }
-
-//  Future<void> addTag(String tag) {
-//    String ref = "tags";
-//    _firestore.collection(ref).document(tag);
-//  }
-//
-//  Future<void> deleteTag(String tag) async {
-//    String ref = "tags";
-//    _firestore.collection(ref).document(tag).delete().whenComplete(() {
-//      print("Deleted Successfully");
-//    }).catchError((e) => print(e));
-//  }
-
 }

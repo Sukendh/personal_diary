@@ -68,7 +68,7 @@ class DiarySearch extends SearchDelegate<Dairy> {
               ),
             ),
             Text(
-              'Enter a note to search.',
+              'Enter title, note, date or tag to search.',
               style: TextStyle(color: Colors.black),
             )
           ],
@@ -166,7 +166,7 @@ class DiarySearch extends SearchDelegate<Dairy> {
               ),
             ),
             Text(
-              'Enter a note to search.',
+              'Enter title, note, date or tag to search.',
               style: TextStyle(color: Colors.black),
             )
           ],
