@@ -1,23 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:personal_diary/plugins_utils/GoogleSignin.dart';
-import 'package:personal_diary/views/diary_home.dart';
-import 'package:personal_diary/views/login_screen.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  GoogleSigninUtils().currentUser().then((user) {
-    if (user != null) {
-      print("User Signed in");
-      runApp(DiaryHome());
-    } else {
-      print("User not Signed in");
-      runApp(MyApp());
-    }
-  });
+import 'diary_list.dart';
 
-}
-
-class MyApp extends StatelessWidget {
+class DiaryHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -48,7 +33,7 @@ class MyApp extends StatelessWidget {
               fontSize: 14),
         ),
       ),
-      home: LoginScreen(),
+      home: DiaryList(),
     );
   }
 }
